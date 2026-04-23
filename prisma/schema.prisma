@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Request {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Contact
+  name            String
+  email           String
+  phone           String?
+  preferredNotify String
+  bandName        String?
+  role            String?
+
+  // Service
+  service         String
+  serviceOther    String?
+
+  // Event
+  isMultiDate     Boolean    @default(false)
+  dates           DateTime[]
+  startTime       String?
+  duration        String?
+  location        String?
+  genre           String?
+  referenceLink   String?
+  budgetRange     String?
+  notes           String?
+
+  // Status
+  status          String   @default("pending")
+
+  // Post-approval
+  finalPay        Decimal?
+  callTime        String?
+  loadInTime      String?
+  isPaid          Boolean  @default(false)
+  postGigNotes    String?
+}
+
+model AvailabilityBlock {
+  id        String   @id @default(cuid())
+  date      DateTime @unique
+  reason    String?
+  createdAt DateTime @default(now())
+}
