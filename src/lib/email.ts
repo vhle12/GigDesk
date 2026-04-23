@@ -1,7 +1,13 @@
 import { Resend } from 'resend'
 import type { BookingFormData } from '@/lib/validations/booking'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend: Resend | null = null
+function getResend(): Resend | null {
+  const key = process.env.RESEND_API_KEY
+  if (!key) return null
+  if (!_resend) _resend = new Resend(key)
+  return _resend
+}
 
 const FROM = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
 const OWNER = process.env.OWNER_EMAIL ?? ''
@@ -57,7 +63,12 @@ export async function sendConfirmation(data: BookingFormData): Promise<void> {
     </div>
   `
 
-  const { error } = await resend.emails.send({
+  const client = getResend()
+  if (!client) {
+    console.warn('[email] RESEND_API_KEY not set — skipping send')
+    return
+  }
+  const { error } = await client.emails.send({
     from: `Vinh Le <${FROM}>`,
     to: data.email,
     replyTo: OWNER || undefined,
@@ -111,7 +122,12 @@ export async function sendOwnerNotification(data: BookingFormData): Promise<void
     </div>
   `
 
-  const { error } = await resend.emails.send({
+  const client = getResend()
+  if (!client) {
+    console.warn('[email] RESEND_API_KEY not set — skipping send')
+    return
+  }
+  const { error } = await client.emails.send({
     from: `GigDesk <${FROM}>`,
     to: OWNER,
     replyTo: data.email,

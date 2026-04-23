@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { db } from '@/lib/db'
+import { sendConfirmation, sendOwnerNotification } from '@/lib/email'
 import { bookingSchema } from '@/lib/validations/booking'
 
 export async function POST(req: NextRequest) {
@@ -43,9 +44,18 @@ export async function POST(req: NextRequest) {
         status: 'pending',
       },
     })
-    return Response.json({ success: true }, { status: 201 })
   } catch (err) {
     console.error('[bookings] db error:', err)
     return Response.json({ error: 'Failed to save request' }, { status: 500 })
   }
+
+  // Fire-and-forget — email failures log but don't block the response
+  sendConfirmation(data).catch(err =>
+    console.error('[email] confirmation failed:', err),
+  )
+  sendOwnerNotification(data).catch(err =>
+    console.error('[email] owner notify failed:', err),
+  )
+
+  return Response.json({ success: true }, { status: 201 })
 }
