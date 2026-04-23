@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Warm editorial palette */
+:root {
+  --color-bg: #faf7f2;
+  --color-surface: #f0ebe3;
+  --color-border: #e8e0d5;
+  --color-accent: #9a7a5a;
+  --color-text: #1a1a1a;
+  --color-muted: #888;
+}
