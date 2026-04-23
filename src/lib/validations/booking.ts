@@ -16,7 +16,7 @@ export const bookingSchema = z.object({
   serviceOther: optStr,
 
   // Event
-  isMultiDate: z.boolean().default(false),
+  isMultiDate: z.boolean(),
   dates: z
     .array(z.string().min(1))
     .min(1, 'At least one date is required')
