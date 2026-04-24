@@ -17,6 +17,12 @@ export function AdminNav() {
         >
           Confirmed Gigs
         </Link>
+        <Link
+          href="/admin/calendar"
+          className="text-sm font-semibold text-[#1a1a1a] hover:text-[#9a7a5a]"
+        >
+          Calendar
+        </Link>
       </nav>
       <form action={logout}>
         <button
