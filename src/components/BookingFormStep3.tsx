@@ -96,7 +96,18 @@ export function BookingFormStep3({ form }: Props) {
         <label className={labelClass}>
           {isMultiDate ? 'Dates *' : 'Date *'}
         </label>
-        <div className="rounded border border-[#e8e0d5] bg-white p-2">
+        <div
+          className="rounded border border-[#e8e0d5] bg-white px-2 py-1"
+          style={{
+            '--rdp-accent-color': '#9a7a5a',
+            '--rdp-accent-background-color': '#f0ebe3',
+            '--rdp-today-color': '#9a7a5a',
+            '--rdp-day-height': '36px',
+            '--rdp-day-width': '36px',
+            '--rdp-day_button-height': '34px',
+            '--rdp-day_button-width': '34px',
+          } as React.CSSProperties}
+        >
           {isMultiDate ? (
             <DayPicker
               mode="multiple"
