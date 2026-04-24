@@ -114,6 +114,8 @@ export function BookingFormStep3({ form }: Props) {
                 '--rdp-day_button-width': '34px',
                 '--rdp-nav_button-height': '1.75rem',
                 '--rdp-nav_button-width': '1.75rem',
+                '--rdp-disabled-opacity': '0.25',
+                color: '#1a1a1a',
               } as React.CSSProperties}
             />
           ) : (
@@ -132,6 +134,8 @@ export function BookingFormStep3({ form }: Props) {
                 '--rdp-day_button-width': '34px',
                 '--rdp-nav_button-height': '1.75rem',
                 '--rdp-nav_button-width': '1.75rem',
+                '--rdp-disabled-opacity': '0.25',
+                color: '#1a1a1a',
               } as React.CSSProperties}
             />
           )}
