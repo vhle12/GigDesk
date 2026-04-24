@@ -1,8 +1,17 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { db } from '@/lib/db'
 import { sendApproval, sendDecline, sendNeedsInfo } from '@/lib/email'
+import { COOKIE_NAME } from '@/lib/session'
+
+export async function logout() {
+  const cookieStore = await cookies()
+  cookieStore.delete(COOKIE_NAME)
+  redirect('/admin/login')
+}
 
 export async function approveRequest(
   requestId: string,
