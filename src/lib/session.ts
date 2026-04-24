@@ -9,17 +9,22 @@ function getSecret(): Uint8Array {
   return new TextEncoder().encode(secret)
 }
 
+const ISSUER = 'gigdesk-admin'
+const AUDIENCE = 'gigdesk-admin'
+
 export async function signSession(): Promise<string> {
   return new SignJWT({ role: 'admin' })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(EXPIRY)
+    .setIssuer(ISSUER)
+    .setAudience(AUDIENCE)
     .sign(getSecret())
 }
 
 export async function verifySession(token: string): Promise<boolean> {
   try {
-    await jwtVerify(token, getSecret())
+    await jwtVerify(token, getSecret(), { issuer: ISSUER, audience: AUDIENCE })
     return true
   } catch {
     return false

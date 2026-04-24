@@ -27,6 +27,7 @@ export default function LoginPage() {
               name="password"
               required
               autoFocus
+              autoComplete="current-password"
               className={inputClass}
             />
           </div>

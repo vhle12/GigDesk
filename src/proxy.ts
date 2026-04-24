@@ -6,7 +6,7 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Allow login page through — no auth required
-  if (pathname.startsWith('/admin/login')) {
+  if (pathname === '/admin/login' || pathname.startsWith('/admin/login/')) {
     return NextResponse.next()
   }
 
