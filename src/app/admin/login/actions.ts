@@ -14,12 +14,14 @@ export async function login(
     return { error: 'Password is required' }
   }
 
-  const hash = process.env.ADMIN_PASSWORD_HASH
-  if (!hash) {
+  const hashB64 = process.env.ADMIN_PASSWORD_HASH
+  if (!hashB64) {
     console.error('[auth] ADMIN_PASSWORD_HASH is not set')
     return { error: 'Server misconfiguration' }
   }
 
+  // Hash is stored base64-encoded to avoid $ expansion in Next.js env loading
+  const hash = Buffer.from(hashB64, 'base64').toString()
   const valid = await compare(password, hash)
   if (!valid) {
     return { error: 'Invalid password' }

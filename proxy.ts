@@ -4,6 +4,7 @@ import { verifySession, COOKIE_NAME } from './src/lib/session'
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+  console.log('[proxy] running for:', pathname)
 
   // Allow login page through — no auth required
   if (pathname.startsWith('/admin/login')) {
