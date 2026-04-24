@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { verifySession, COOKIE_NAME } from './src/lib/session'
+import { verifySession, COOKIE_NAME } from '@/lib/session'
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  console.log('[proxy] running for:', pathname)
 
   // Allow login page through — no auth required
   if (pathname.startsWith('/admin/login')) {
