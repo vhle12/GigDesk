@@ -96,7 +96,7 @@ export function BookingFormStep3({ form }: Props) {
         <label className={labelClass}>
           {isMultiDate ? 'Dates *' : 'Date *'}
         </label>
-        <div className="rounded border border-[#e8e0d5] bg-white">
+        <div className="w-fit rounded border border-[#e8e0d5] bg-white">
           {isMultiDate ? (
             <DayPicker
               mode="multiple"
