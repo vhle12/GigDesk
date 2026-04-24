@@ -96,18 +96,7 @@ export function BookingFormStep3({ form }: Props) {
         <label className={labelClass}>
           {isMultiDate ? 'Dates *' : 'Date *'}
         </label>
-        <div
-          className="rounded border border-[#e8e0d5] bg-white px-2 py-1"
-          style={{
-            '--rdp-accent-color': '#9a7a5a',
-            '--rdp-accent-background-color': '#f0ebe3',
-            '--rdp-today-color': '#9a7a5a',
-            '--rdp-day-height': '36px',
-            '--rdp-day-width': '36px',
-            '--rdp-day_button-height': '34px',
-            '--rdp-day_button-width': '34px',
-          } as React.CSSProperties}
-        >
+        <div className="rounded border border-[#e8e0d5] bg-white">
           {isMultiDate ? (
             <DayPicker
               mode="multiple"
@@ -115,6 +104,17 @@ export function BookingFormStep3({ form }: Props) {
               onSelect={handleMultiSelect}
               disabled={disabled}
               max={5}
+              style={{
+                '--rdp-accent-color': '#9a7a5a',
+                '--rdp-accent-background-color': '#f0ebe3',
+                '--rdp-today-color': '#9a7a5a',
+                '--rdp-day-height': '36px',
+                '--rdp-day-width': '36px',
+                '--rdp-day_button-height': '34px',
+                '--rdp-day_button-width': '34px',
+                '--rdp-nav_button-height': '1.75rem',
+                '--rdp-nav_button-width': '1.75rem',
+              } as React.CSSProperties}
             />
           ) : (
             <DayPicker
@@ -122,6 +122,17 @@ export function BookingFormStep3({ form }: Props) {
               selected={selected[0]}
               onSelect={handleSingleSelect}
               disabled={disabled}
+              style={{
+                '--rdp-accent-color': '#9a7a5a',
+                '--rdp-accent-background-color': '#f0ebe3',
+                '--rdp-today-color': '#9a7a5a',
+                '--rdp-day-height': '36px',
+                '--rdp-day-width': '36px',
+                '--rdp-day_button-height': '34px',
+                '--rdp-day_button-width': '34px',
+                '--rdp-nav_button-height': '1.75rem',
+                '--rdp-nav_button-width': '1.75rem',
+              } as React.CSSProperties}
             />
           )}
         </div>
