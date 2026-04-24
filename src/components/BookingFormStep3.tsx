@@ -1,6 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { DayPicker } from 'react-day-picker'
+import 'react-day-picker/style.css'
 import { UseFormReturn } from 'react-hook-form'
 import { BookingFormData } from '@/lib/validations/booking'
 
@@ -26,11 +28,49 @@ export function BookingFormStep3({ form }: Props) {
   const {
     register,
     watch,
+    setValue,
     formState: { errors },
   } = form
 
   const isMultiDate = watch('isMultiDate')
-  const [dateCount, setDateCount] = useState(1)
+
+  // Selected dates as Date objects (synced to RHF string array)
+  const [selected, setSelected] = useState<Date[]>([])
+  // Blocked dates fetched from API
+  const [blockedDates, setBlockedDates] = useState<Date[]>([])
+
+  // Fetch blocked dates once on mount
+  useEffect(() => {
+    fetch('/api/blocked-dates')
+      .then(r => r.json())
+      .then((dates: string[]) =>
+        setBlockedDates(dates.map(d => new Date(d + 'T00:00:00.000Z'))),
+      )
+      .catch(() => {}) // non-critical — fail silently
+  }, [])
+
+  // Sync selected dates to RHF 'dates' field as YYYY-MM-DD strings
+  const syncToForm = (dates: Date[]) => {
+    setValue(
+      'dates',
+      dates.map(d => d.toISOString().split('T')[0]),
+      { shouldValidate: true },
+    )
+  }
+
+  const disabled = [{ before: new Date() }, ...blockedDates]
+
+  const handleSingleSelect = (date: Date | undefined) => {
+    const next = date ? [date] : []
+    setSelected(next)
+    syncToForm(next)
+  }
+
+  const handleMultiSelect = (dates: Date[] | undefined) => {
+    const next = dates ?? []
+    setSelected(next)
+    syncToForm(next)
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -41,8 +81,10 @@ export function BookingFormStep3({ form }: Props) {
           id="isMultiDate"
           className="h-4 w-4 accent-[#9a7a5a]"
           onChange={e => {
-            form.setValue('isMultiDate', e.target.checked)
-            if (!e.target.checked) setDateCount(1)
+            setValue('isMultiDate', e.target.checked)
+            // Reset selection when toggling mode
+            setSelected([])
+            syncToForm([])
           }}
         />
         <label htmlFor="isMultiDate" className="text-sm text-[#555]">
@@ -54,31 +96,33 @@ export function BookingFormStep3({ form }: Props) {
         <label className={labelClass}>
           {isMultiDate ? 'Dates *' : 'Date *'}
         </label>
-        <div className="flex flex-col gap-2">
-          {Array.from({ length: dateCount }).map((_, i) => (
-            <input
-              key={i}
-              {...register(`dates.${i}`)}
-              type="date"
-              className={inputClass}
+        <div className="rounded border border-[#e8e0d5] bg-white p-2">
+          {isMultiDate ? (
+            <DayPicker
+              mode="multiple"
+              selected={selected}
+              onSelect={handleMultiSelect}
+              disabled={disabled}
+              max={5}
             />
-          ))}
+          ) : (
+            <DayPicker
+              mode="single"
+              selected={selected[0]}
+              onSelect={handleSingleSelect}
+              disabled={disabled}
+            />
+          )}
         </div>
-        {errors.dates && (
+        {selected.length === 0 && errors.dates && (
           <p className={errorClass}>
-            {Array.isArray(errors.dates)
-              ? 'All date fields are required'
-              : (errors.dates as { message?: string }).message}
+            {(errors.dates as { message?: string }).message ?? 'Please select a date'}
           </p>
         )}
-        {isMultiDate && dateCount < 5 && (
-          <button
-            type="button"
-            onClick={() => setDateCount(c => c + 1)}
-            className="mt-2 text-xs text-[#9a7a5a] underline underline-offset-2"
-          >
-            + Add another date
-          </button>
+        {isMultiDate && selected.length > 0 && (
+          <p className="mt-1 text-xs text-[#9a7a5a]">
+            {selected.length} date{selected.length > 1 ? 's' : ''} selected (max 5)
+          </p>
         )}
       </div>
 
