@@ -146,3 +146,96 @@ function escape(s: string): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
 }
+
+type RequestSummary = {
+  name: string
+  email: string
+  service: string
+  serviceOther: string | null
+}
+
+export async function sendApproval(req: RequestSummary): Promise<void> {
+  const client = getResend()
+  if (!client) {
+    console.warn('[email] RESEND_API_KEY not set — skipping approval email')
+    return
+  }
+
+  const serviceName =
+    req.service === 'other' && req.serviceOther
+      ? req.serviceOther
+      : (SERVICE_LABELS[req.service] ?? req.service)
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; background: #faf7f2; color: #1a1a1a;">
+      <p style="font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #9a7a5a; margin: 0 0 12px;">Vinh Le · Bookings</p>
+      <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 16px;">Your booking request has been approved</h1>
+      <p style="font-size: 15px; line-height: 1.6; color: #333; margin: 0 0 20px;">
+        Hi ${escape(req.name)} — great news, your request for <strong>${escape(serviceName)}</strong> has been approved. I'll follow up shortly with the final details.
+      </p>
+      <p style="font-size: 13px; color: #888; margin: 0;">— Vinh</p>
+    </div>
+  `
+
+  const { error } = await client.emails.send({
+    from: `Vinh Le <${FROM}>`,
+    to: req.email,
+    replyTo: OWNER || undefined,
+    subject: 'Your booking request has been approved',
+    html,
+  })
+
+  if (error) throw error
+}
+
+export async function sendDecline(req: RequestSummary, body: string): Promise<void> {
+  const client = getResend()
+  if (!client) {
+    console.warn('[email] RESEND_API_KEY not set — skipping decline email')
+    return
+  }
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; background: #faf7f2; color: #1a1a1a;">
+      <p style="font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #9a7a5a; margin: 0 0 12px;">Vinh Le · Bookings</p>
+      <p style="font-size: 15px; line-height: 1.6; color: #333; margin: 0 0 20px; white-space: pre-line;">${escape(body)}</p>
+      <p style="font-size: 13px; color: #888; margin: 0;">— Vinh</p>
+    </div>
+  `
+
+  const { error } = await client.emails.send({
+    from: `Vinh Le <${FROM}>`,
+    to: req.email,
+    replyTo: OWNER || undefined,
+    subject: 'Re: Your booking request',
+    html,
+  })
+
+  if (error) throw error
+}
+
+export async function sendNeedsInfo(req: RequestSummary, body: string): Promise<void> {
+  const client = getResend()
+  if (!client) {
+    console.warn('[email] RESEND_API_KEY not set — skipping needs-info email')
+    return
+  }
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; background: #faf7f2; color: #1a1a1a;">
+      <p style="font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #9a7a5a; margin: 0 0 12px;">Vinh Le · Bookings</p>
+      <p style="font-size: 15px; line-height: 1.6; color: #333; margin: 0 0 20px; white-space: pre-line;">${escape(body)}</p>
+      <p style="font-size: 13px; color: #888; margin: 0;">— Vinh</p>
+    </div>
+  `
+
+  const { error } = await client.emails.send({
+    from: `Vinh Le <${FROM}>`,
+    to: req.email,
+    replyTo: OWNER || undefined,
+    subject: 'Re: Your booking request — a quick question',
+    html,
+  })
+
+  if (error) throw error
+}
